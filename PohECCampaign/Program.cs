@@ -24,19 +24,33 @@ namespace PohECCampaign
 			}
 
 			foreach (var campaignPrice in campaignPrices) {
-				int bestPrice = 0;
+				Console.WriteLine(Search(itemPrices, campaignPrice));
+			}
+		}
 
-				for (int i = 0; i < itemCount; i++) {
-					for (int j = i + 1; j < itemCount; j++) {
-						int totalPrice = itemPrices[i] + itemPrices[j];
-						if (bestPrice <= totalPrice && totalPrice <= campaignPrice) {
-							bestPrice = totalPrice;
-						}
+		static int Search(int[] itemPrices, int campaignPrice)
+		{
+			int bestPrice = 0;
+			// キャンペーン価格を超えている商品を除く。 
+			var targetItems = itemPrices.Where(it => it <= campaignPrice).ToArray();
+
+			for (int i = 0; i < targetItems.Length; i++) {
+				for (int j = i + 1; j < targetItems.Length; j++) {
+					int totalPrice = targetItems[i] + targetItems[j];
+					if (IsBestPrice(totalPrice, bestPrice, campaignPrice)) {
+						bestPrice = totalPrice;
+						// キャンペーン価格だったら返す。 
+						if (bestPrice == campaignPrice) return bestPrice;
 					}
 				}
-
-				Console.WriteLine(bestPrice);
 			}
+
+			return bestPrice;
+		}
+
+		static bool IsBestPrice(int targetPrice, int bestPrice, int campaignPrice)
+		{
+			return bestPrice <= targetPrice && targetPrice <= campaignPrice;
 		}
 	}
 }
